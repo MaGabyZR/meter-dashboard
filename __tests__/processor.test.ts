@@ -60,4 +60,20 @@ describe('processReadings', () => {
 
     expect(result).toHaveLength(1);
   });
+
+  test('handles 32-bit integer overflow', () => {
+    const readings: MeterReading[] = [
+      { meterId: 'MTR-004', timestamp: '2025-02-05T10:00:00Z', cumulativeVolume: 4294967290 },
+      { meterId: 'MTR-004', timestamp: '2025-02-05T11:00:00Z', cumulativeVolume: 10 }
+    ];
+
+    const result = processReadings(readings);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      meterId: 'MTR-004',
+      consumption: 15, // (4294967295 - 4294967290) + 10
+      flag: 'normal'
+    });
+  });
 });

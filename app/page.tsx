@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { processReadings } from '@/lib/processor';
 import { MeterSummary } from '@/lib/types';
+import { FleetStats } from '@/components/FleetStats';
+import { FleetTable } from './page.client';
 import readingsData from '@/data/readings.json';
 
 function getMeterSummaries(): MeterSummary[] {
@@ -47,6 +49,7 @@ function getMeterSummaries(): MeterSummary[] {
 
 export default function FleetOverview() {
   const meters = getMeterSummaries();
+  const allRecords = processReadings(readingsData);
 
   return (
     <>
@@ -54,26 +57,8 @@ export default function FleetOverview() {
         <h1>Fleet Overview</h1>
       </div>
       <div className="container">
-        <div className="meter-grid">
-          {meters.map(meter => (
-            <Link 
-              key={meter.meterId} 
-              href={`/meter/${meter.meterId}`}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <div className="card">
-                <div className="meter-id">{meter.meterId}</div>
-                <div className="meter-info">
-                  <div>Latest: {new Date(meter.latestTimestamp).toLocaleString()}</div>
-                  <div>Total Consumption: {meter.totalConsumption.toFixed(1)} gal</div>
-                </div>
-                <span className={`status ${meter.status}`}>
-                  {meter.status}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <FleetStats allRecords={allRecords} />
+        <FleetTable initialMeters={meters} />
       </div>
     </>
   );

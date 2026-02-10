@@ -24,7 +24,23 @@ Run the unit tests with:
 npm test
 ```
 
-The test suite covers the core processing logic in `lib/processor.ts`, including delta calculation, gap estimation, counter reset detection, and duplicate removal. All 4 tests pass successfully.
+The test suite covers the core processing logic in `lib/processor.ts`, including delta calculation, gap estimation, counter reset detection, duplicate removal, and 32-bit integer overflow handling. All 5 tests pass successfully.
+
+## Features
+
+### Core Requirements
+- **Data Processing**: Pure TypeScript function that transforms raw meter readings into hourly consumption records
+- **Delta Calculation**: Computes consumption between consecutive readings
+- **Hourly Bucketing**: Groups consumption into hourly time windows
+- **Gap Handling**: Distributes consumption evenly across multi-hour gaps with `gap_estimated` flag
+- **Counter Reset Detection**: Identifies when meters reset to zero with `counter_reset` flag
+- **Duplicate Removal**: Filters out readings with identical timestamps
+
+### Bonus Features
+- **Fleet Summary Stats**: Dashboard displays total meters, total consumption, gap events, and reset events
+- **Filtering & Sorting**: Filter meters by status (all/active/stale) and sort by ID, consumption, or status
+- **32-bit Integer Overflow**: Handles counter wrapping from 4,294,967,295 back to 0
+- **Empty States**: User-friendly messages when no data is available or filters return no results
 
 ## Project Structure
 
@@ -38,7 +54,8 @@ meter-dashboard/
 │   └── globals.css                 // Global styles
 ├── components/
 │   ├── MeterTable.tsx              // Hourly records table component
-│   └── ConsumptionChart.tsx        // Bar chart component
+│   ├── ConsumptionChart.tsx        // Bar chart component
+│   └── FleetStats.tsx              // Summary statistics component
 ├── lib/
 │   ├── processor.ts                // Core data processing logic (pure TypeScript)
 │   └── types.ts                    // TypeScript interfaces

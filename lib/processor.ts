@@ -20,18 +20,31 @@ export function processReadings(readings: MeterReading[]): HourlyConsumption[] {
       const currTime = new Date(curr.timestamp);
       const hoursDiff = (currTime.getTime() - prevTime.getTime()) / (1000 * 60 * 60);
 
-      // Counter reset detection
-      if (curr.cumulativeVolume < prev.cumulativeVolume) {
-        result.push({
-          meterId,
-          hour: toHourBucket(currTime),
-          consumption: curr.cumulativeVolume,
-          flag: 'counter_reset'
-        });
-        continue;
-      }
+      // Handle 32-bit integer overflow (wraps from 4,294,967,295 to 0)
+      const MAX_32BIT = 4294967295;
+      let delta: number;
 
-      const delta = curr.cumulativeVolume - prev.cumulativeVolume;
+      if (curr.cumulativeVolume < prev.cumulativeVolume) {
+        // Check if this is a 32-bit overflow or a counter reset
+        const overflowDelta = (MAX_32BIT - prev.cumulativeVolume) + curr.cumulativeVolume;
+        
+        // If overflow delta is reasonable for the time period, treat as overflow
+        // Otherwise treat as counter reset
+        if (overflowDelta < hoursDiff * 1000) { // Reasonable consumption rate check
+          delta = overflowDelta;
+        } else {
+          // Counter reset
+          result.push({
+            meterId,
+            hour: toHourBucket(currTime),
+            consumption: curr.cumulativeVolume,
+            flag: 'counter_reset'
+          });
+          continue;
+        }
+      } else {
+        delta = curr.cumulativeVolume - prev.cumulativeVolume;
+      }
 
       // Normal case: readings in same or adjacent hours
       if (hoursDiff <= 1.5) {

@@ -22,10 +22,18 @@ export default function MeterDetail({ params }: { params: { id: string } }) {
 
   if (data.length === 0) {
     return (
-      <div className="container">
-        <Link href="/" className="back-link">← Back to Fleet</Link>
-        <p>No data found for meter {params.id}</p>
-      </div>
+      <>
+        <div className="header">
+          <h1>Meter Detail: {params.id}</h1>
+        </div>
+        <div className="container">
+          <Link href="/" className="back-link">← Back to Fleet</Link>
+          <div className="empty-state">
+            <p>No data found for meter {params.id}</p>
+            <p>This meter may not exist in the dataset.</p>
+          </div>
+        </div>
+      </>
     );
   }
 
