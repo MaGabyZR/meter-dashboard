@@ -70,10 +70,11 @@ meter-dashboard/
 └── README.md
 ```
 
-## Design Tradeoff
+## Design Assumption
 
-**Assumption: Gap estimation uses simple linear distribution**
-
-When meter readings arrive with gaps spanning multiple hours, the processor distributes the total consumption evenly across all affected hourly buckets. This assumes constant usage rates during the gap period.
-
-**Why:** Without additional context like historical patterns, weather data, or building occupancy schedules, a linear distribution provides a reasonable and transparent baseline. More sophisticated approaches (time-of-day weighting, machine learning models) would require additional data sources and significantly more complexity. For a take-home assessment focused on core data processing and UI implementation, the simple approach demonstrates clear thinking about the problem while keeping the solution maintainable and testable.
+An assumption that I made was about handling missing data. 
+I approached it by spreading the usage evenly. 
+If a meter reading is missing for several hours or arrives with gaps, the system takes the total usage during that "gap" and divides it equally across each hour. 
+This assumes a steady usage rate while the meter was “offline” or had a gap period.
+Why? Without extra information that can give more context, like typical daily habits, the weather, or when people are usually in the building, I thought splitting the usage evenly is the fairest and most logical way to handle the data.
+For this project, I chose a straightforward approach that is easy to understand, reliable, and keeps the focus on building a clean, working, and testable application.
