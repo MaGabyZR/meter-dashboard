@@ -17,6 +17,22 @@ A Next.js application that processes water meter telemetry data and displays hou
 
 The application should start without any surprises. All dependencies are standard Next.js packages, and the sample data is included in the repository.
 
+## Deployment
+
+### Quick Deploy to Vercel
+
+The fastest way to deploy this application:
+
+```bash
+npm install -g vercel
+vercel login
+vercel --prod
+```
+
+Your app will be live at `https://your-project-name.vercel.app`
+
+For detailed deployment instructions including GitHub integration and alternative platforms, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+
 ## How to Run Tests
 
 Run the unit tests with:
